@@ -14,7 +14,8 @@ window.onload = function() {
     var canvas = document.createElement('canvas');
     canvas.width = canvasWidth
     canvas.height = canvasHeight
-    canvas.style.border = "1px solid"
+    canvas.style.border = "2px solid"
+    canvas.style.color = "yellow"
     document.body.appendChild(canvas)
     ctx = canvas.getContext('2d');
     snakee = new Snake([
@@ -46,7 +47,7 @@ window.onload = function() {
     this.direction = direction
     this.draw = function() {
       ctx.save();
-      ctx.fillStyle = "#ff0000"
+      ctx.fillStyle = "#1D1D1D"
       for (var i = 0; i < this.body.length; i++) {
         drawBlock(ctx, this.body[i])
       }
@@ -86,6 +87,7 @@ window.onload = function() {
         case "up":
           allowedDirections = ["left", "right"]
           break
+        default:
           throw ('Invalid Direction')
       }
       if (allowedDirections.indexOf(newDirection) > -1) {
