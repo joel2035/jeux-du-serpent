@@ -1,13 +1,17 @@
 window.onload = function() {
 
 
-  var canvasWidth = 700
-  var canvasHeight = 400
+  var canvasWidth = 900
+  var canvasHeight = 600
   var blockSize = 30
   var ctx
   var delay = 100
 
+
   var snakee
+  var applee
+  var widthInBlocks = canvasWidth / blockSize
+  var heightInblocks = canvasHeight / blockSize
   init()
 
   function init() {
@@ -17,23 +21,33 @@ window.onload = function() {
     canvas.style.border = "2px solid"
     canvas.style.color = "yellow"
     document.body.appendChild(canvas)
+
     ctx = canvas.getContext('2d');
     snakee = new Snake([
       [6, 4],
       [5, 4],
       [4, 4]
     ], 'right');
+    applee = new Apple([10, 10])
     refreshCanvas();
 
   }
 
   function refreshCanvas() {
 
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+
 
     snakee.advance()
-    snakee.draw()
-    setTimeout(refreshCanvas, delay)
+    if (snakee.checkCollision()) {
+      // Game over
+    } else {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+      snakee.draw()
+      applee.draw()
+      setTimeout(refreshCanvas, delay)
+    }
+
+
   }
 
   function drawBlock(ctx, position) {
@@ -94,8 +108,48 @@ window.onload = function() {
         this.direction = newDirection
       }
     }
+    this.checkCollision = function() {
+      var wallCollision = false
+      var snakeCollision = false
+      var head = this.body[0]
+      var rest = this.body.slice(1)
+      var snakeX = head[0]
+      var snakeY = head[1]
+      var minX = 0
+      var minY = 0
+      var maxX = widthInBlocks - 1
+      var maxY = heightInblocks - 1
+      var isNotBetweenHorizontalWalls = snakeX < minX || snakeX > maxY
+      var isNotBetweenVerticalWalls = snakeY < minY || snakeY > maxY
+      if (isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls) {
+        wallCollision = true
+      }
+      for (var i = 0; i < rest.length; i++) {
+        if (snakeX === rest[i][0] && snakeY === rest[i][1]) {
+          snakeColision = true
+        }
+      }
+      return wallCollision || snakeCollision
+    }
 
 
+
+  }
+
+  function Apple(position) {
+    this.position = position
+    this.draw = function() {
+      ctx.save()
+      ctx.fillStyle = "#33CC33"
+      ctx.beginPath();
+      var radius = blockSize / 2
+      var x = position[0] * blockSize + radius
+      var y = position[1] * blockSize + radius
+      ctx.arc(x, y, radius, 0, Math.PI * 2, true)
+      ctx.fill()
+      ctx.restore()
+
+    }
 
   }
 
